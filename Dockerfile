@@ -17,8 +17,10 @@ RUN cp /opt/adguardhome/AdGuardHome /opt/adguardhome/AdGuardHome-nocap \
 # Web interface / DoH port (must match the PORT env var on Render)
 EXPOSE 3000
 
+# ENTRYPOINT (not CMD): the base image already defines an ENTRYPOINT, and a CMD
+# would only be appended to it as arguments, so we replace it here.
 # Create the data folder on the mounted disk, then start AdGuard Home.
 # -c : config file location
 # -w : work dir (blocklists, query logs, stats)
 # -h/-p : web interface address and port
-CMD ["sh", "-c", "mkdir -p /data/work && exec /opt/adguardhome/AdGuardHome-nocap --no-check-update -c /data/AdGuardHome.yaml -w /data/work -h 0.0.0.0 -p 3000"]
+ENTRYPOINT ["sh", "-c", "mkdir -p /data/work && exec /opt/adguardhome/AdGuardHome-nocap --no-check-update -c /data/AdGuardHome.yaml -w /data/work -h 0.0.0.0 -p 3000"]
