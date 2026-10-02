@@ -9,6 +9,11 @@
 
 FROM adguard/adguardhome:latest
 
+# The official binary carries file capabilities that Render's sandbox
+# rejects ("exec ...: operation not permitted"). A plain copy drops them.
+RUN cp /opt/adguardhome/AdGuardHome /opt/adguardhome/AdGuardHome-nocap \
+ && chmod 755 /opt/adguardhome/AdGuardHome-nocap
+
 # Web interface / DoH port (must match the PORT env var on Render)
 EXPOSE 3000
 
@@ -16,4 +21,4 @@ EXPOSE 3000
 # -c : config file location
 # -w : work dir (blocklists, query logs, stats)
 # -h/-p : web interface address and port
-CMD ["sh", "-c", "mkdir -p /data/work && exec /opt/adguardhome/AdGuardHome --no-check-update -c /data/AdGuardHome.yaml -w /data/work -h 0.0.0.0 -p 3000"]
+CMD ["sh", "-c", "mkdir -p /data/work && exec /opt/adguardhome/AdGuardHome-nocap --no-check-update -c /data/AdGuardHome.yaml -w /data/work -h 0.0.0.0 -p 3000"]
